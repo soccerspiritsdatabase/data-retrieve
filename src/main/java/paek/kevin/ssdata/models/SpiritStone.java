@@ -22,7 +22,7 @@ public class SpiritStone extends Model {
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
-    this.id = String.valueOf(br.readInt32());
+    this.id = br.readInt32();
     nameId = br.readString();
     value = br.readInt32();
     rarity = SpiritStoneRarity.valueOf(br.readInt32());

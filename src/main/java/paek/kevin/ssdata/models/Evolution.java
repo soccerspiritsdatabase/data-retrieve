@@ -14,7 +14,7 @@ public class Evolution extends Model {
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
-    this.id = String.valueOf(br.readInt32());
+    this.id = br.readInt32();
 
     materials = new ArrayList<Material>();
     for (int i = 0; i < 4; i++) {

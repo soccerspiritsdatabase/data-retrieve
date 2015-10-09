@@ -25,21 +25,21 @@ public class ParseDBFiles implements Worker {
     System.out.println("----------------------------------------");
     System.out.println("Parsing models");
     boolean saveFiles = true;
-    Map<String, Text> texts = Model.merge(
+    Map<Object, Text> texts = Model.merge(
             parseModel("Texts", Text.class),
             parseModel("TextCharacters", Text.class)
     );
-    Map<String, Evolution> evolutions = parseModel("Evolutions", Evolution.class);
-    Map<String, PlayerCollection> playerCollections = parseModel("Collections", PlayerCollection.class);
-    Map<String, CharacterChain> characterChains = parseModel("CharacterChs", CharacterChain.class);
-    Map<String, Character> characters = parseModel("Characters", Character.class);
-    Map<String, SpiritStone> spiritStones = parseModel("Items", SpiritStone.class);
-    Map<String, SpiritStoneCollection> spiritStoneCollections = parseModel("ItemCollections", SpiritStoneCollection.class);
-    Map<String, Skill> skills = parseModel("Skills", Skill.class);
+    Map<Object, Evolution> evolutions = parseModel("Evolutions", Evolution.class);
+    Map<Object, PlayerCollection> playerCollections = parseModel("Collections", PlayerCollection.class);
+    Map<Object, CharacterChain> characterChains = parseModel("CharacterChs", CharacterChain.class);
+    Map<Object, Character> characters = parseModel("Characters", Character.class);
+    Map<Object, SpiritStone> spiritStones = parseModel("Items", SpiritStone.class);
+    Map<Object, SpiritStoneCollection> spiritStoneCollections = parseModel("ItemCollections", SpiritStoneCollection.class);
+    Map<Object, Skill> skills = parseModel("Skills", Skill.class);
 
     System.out.println("Combining references");
     for (Character character : characters.values()) {
-      CharacterChain chain = characterChains.get(String.valueOf(character.getChainId()));
+      CharacterChain chain = characterChains.get(character.getChainId());
       character.setChain(chain);
     }
 
@@ -59,7 +59,7 @@ public class ParseDBFiles implements Worker {
     }
   }
 
-  private <T extends Model> Map<String, T> parseModel(String fileName, Class<T> modelClass) {
+  private <T extends Model> Map<Object, T> parseModel(String fileName, Class<T> modelClass) {
     System.out.println(fileName);
     List<T> modelsList = new ArrayList<T>();
     try {

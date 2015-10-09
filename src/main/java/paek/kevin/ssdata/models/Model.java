@@ -9,25 +9,25 @@ import java.util.Map;
 
 public class Model {
 
-  public static <T extends Model> Map<String, T> toMap(List<T> models) {
-    Map<String, T> map = new HashMap<String, T>();
+  public static <T extends Model> Map<Object, T> toMap(List<T> models) {
+    Map<Object, T> map = new HashMap<Object, T>();
     for (T model : models) {
       map.put(model.id, model);
     }
     return map;
   }
 
-  public static <T extends Model> Map<String, T> merge(Map<String, T>... maps) {
-    Map<String, T> map = new HashMap<String, T>();
-    for (Map<String, T> aMap : maps) {
-      for (Map.Entry<String, T> entry : aMap.entrySet()) {
+  public static <T extends Model> Map<Object, T> merge(Map<Object, T>... maps) {
+    Map<Object, T> map = new HashMap<Object, T>();
+    for (Map<Object, T> aMap : maps) {
+      for (Map.Entry<Object, T> entry : aMap.entrySet()) {
         map.put(entry.getKey(), entry.getValue());
       }
     }
     return map;
   }
 
-  protected String id;
+  protected Object id;
 
   public boolean read(BinaryReaderDotNet br) throws IOException {
     return true;

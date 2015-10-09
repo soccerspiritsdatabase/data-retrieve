@@ -17,7 +17,7 @@ public class SpiritStoneCollection extends Model {
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
-    this.id = String.valueOf(br.readInt32());
+    this.id = br.readInt32();
 
     commons = new ArrayList<Integer>();
     for (int i = 0; i < 4; i++) {

@@ -18,7 +18,7 @@ public class PlayerCollection extends Model {
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
-    this.id = String.valueOf(br.readInt32());
+    this.id = br.readInt32();
     order = br.readInt32();
     teamNameId = br.readString();
     color = br.readInt32();

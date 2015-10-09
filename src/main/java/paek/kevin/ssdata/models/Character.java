@@ -42,7 +42,7 @@ public class Character extends Model {
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
-    this.id = String.valueOf(br.readInt32());
+    this.id = br.readInt32();
     imageId = br.readInt32();
     // soundId
     br.readInt32();
