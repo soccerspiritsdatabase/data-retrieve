@@ -8,23 +8,51 @@ public class Text extends Model {
 
   private String kr;
   private String en;
-  transient private String fr;
-  transient private String de;
-  private String ja;
-  transient private String zhCN;
-  transient private String zhTW;
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
     this.id = br.readString();
-    this.kr = br.readString();
-    this.en = br.readString();
-    this.fr = br.readString();
-    this.de = br.readString();
-    this.ja = br.readString();
-    this.zhCN = br.readString();
-    this.zhTW = br.readString();
+    kr = filter(br.readString());
+    en = filter(br.readString());
+    // fr
+    br.readString();
+    // de
+    br.readString();
+    // ja
+    br.readString();
+    // zhCN
+    br.readString();
+    // zhTW
+    br.readString();
 
     return true;
+  }
+
+  public Text clone() {
+    Text clone = new Text();
+    clone.id = id;
+    clone.kr = kr;
+    clone.en = en;
+    return clone;
+  }
+
+  private String filter(String input) {
+    return input.replaceAll("\\[[\\dA-F-]+\\]", "");
+  }
+
+  public String getKr() {
+    return kr;
+  }
+
+  public void setKr(String kr) {
+    this.kr = kr;
+  }
+
+  public String getEn() {
+    return en;
+  }
+
+  public void setEn(String en) {
+    this.en = en;
   }
 }

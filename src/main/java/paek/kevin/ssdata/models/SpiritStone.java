@@ -11,7 +11,7 @@ import java.util.List;
 
 public class SpiritStone extends Model {
 
-  private String nameId;
+  transient private String nameId;
   private int value;
   private SpiritStoneRarity rarity;
   private Element element;
@@ -19,6 +19,9 @@ public class SpiritStone extends Model {
   private String iconImage;
   private SpiritStoneZodiac zodiac;
   private int evolutionId;
+
+  private Text name;
+  private List<Skill> skills;
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
@@ -47,5 +50,53 @@ public class SpiritStone extends Model {
     evolutionId = br.readInt32();
 
     return true;
+  }
+
+  public String getNameId() {
+    return nameId;
+  }
+
+  public int getValue() {
+    return value;
+  }
+
+  public SpiritStoneRarity getRarity() {
+    return rarity;
+  }
+
+  public Element getElement() {
+    return element;
+  }
+
+  public List<Integer> getSkillIds() {
+    return skillIds;
+  }
+
+  public String getIconImage() {
+    return iconImage;
+  }
+
+  public SpiritStoneZodiac getZodiac() {
+    return zodiac;
+  }
+
+  public int getEvolutionId() {
+    return evolutionId;
+  }
+
+  public Text getName() {
+    return name;
+  }
+
+  public void setName(Text name) {
+    this.name = name;
+  }
+
+  public List<Skill> getSkills() {
+    return skills;
+  }
+
+  public void setSkills(List<Skill> skills) {
+    this.skills = skills;
   }
 }

@@ -3,9 +3,6 @@ package paek.kevin.ssdata.models.enums;
 import com.google.gson.annotations.SerializedName;
 
 public enum SkillType {
-  @SerializedName("Nothing")
-  NOTHING,
-
   @SerializedName("Active")
   ACTIVE,
 
@@ -35,22 +32,20 @@ public enum SkillType {
   public static SkillType valueOf(int value) {
     switch (value) {
       case 1:
-        return SkillType.NOTHING;
-      case 2:
         return SkillType.ACTIVE;
-      case 3:
+      case 2:
         return SkillType.PASSIVE;
-      case 4:
+      case 3:
         return SkillType.ACE;
-      case 5:
+      case 4:
         return SkillType.ITEM;
-      case 6:
+      case 5:
         return SkillType.WEATHER;
-      case 7:
+      case 6:
         return SkillType.JOB;
-      case 8:
+      case 7:
         return SkillType.LOVE;
-      case 9:
+      case 8:
         return SkillType.SYSTEM;
       default:
         return SkillType.UNKNOWN;

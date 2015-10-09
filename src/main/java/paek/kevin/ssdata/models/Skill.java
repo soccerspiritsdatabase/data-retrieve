@@ -9,17 +9,19 @@ import java.util.List;
 
 public class Skill extends Model {
 
-  private String nameId;
-  private String descId;
+  transient private String nameId;
+  transient private String descId;
   private SkillType type;
   private float cost;
   private int cooldown;
-
-  private List<Effect> effects;
-
+  private List<SkillValue> values;
   private String effectType;
   private int effectBgType;
   private String icon;
+
+  private Text name;
+  private Text description;
+  private List<SkillEffect> effects;
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
@@ -66,16 +68,16 @@ public class Skill extends Model {
     // conditionValue2
     br.readInt32();
 
-    effects = new ArrayList<Effect>();
+    values = new ArrayList<SkillValue>();
     for (int i = 0; i < 5; i++) {
-      Effect effect = new Effect();
+      SkillValue skillValue = new SkillValue();
       int value = br.readInt32();
-      effect.init = br.readSingle();
-      effect.growth = br.readSingle();
+      skillValue.init = br.readSingle();
+      skillValue.growth = br.readSingle();
       // cardGrowth
       br.readSingle();
       if (value != 0) {
-        effects.add(effect);
+        values.add(skillValue);
       }
     }
 
@@ -90,8 +92,105 @@ public class Skill extends Model {
     return true;
   }
 
-  class Effect {
+  public String getNameId() {
+    return nameId;
+  }
+
+  public String getDescId() {
+    return descId;
+  }
+
+  public SkillType getType() {
+    return type;
+  }
+
+  public float getCost() {
+    return cost;
+  }
+
+  public int getCooldown() {
+    return cooldown;
+  }
+
+  public List<SkillValue> getValues() {
+    return values;
+  }
+
+  public String getEffectType() {
+    return effectType;
+  }
+
+  public int getEffectBgType() {
+    return effectBgType;
+  }
+
+  public String getIcon() {
+    return icon;
+  }
+
+  public Text getName() {
+    return name;
+  }
+
+  public void setName(Text name) {
+    this.name = name;
+  }
+
+  public Text getDescription() {
+    return description;
+  }
+
+  public void setDescription(Text description) {
+    this.description = description;
+
+    int levelMin = 0, levelMax = 0;
+    switch (type) {
+      case ACTIVE:
+      case PASSIVE:
+        levelMin = 1;
+        levelMax = 5;
+        break;
+      case ACE:
+        levelMin = levelMax = 1;
+        break;
+      case ITEM:
+        levelMin = 0;
+        levelMax = 15;
+        break;
+    }
+
+    this.effects = new ArrayList<SkillEffect>();
+    for (int level = levelMin; level <= levelMax; level++) {
+      SkillEffect effect = new SkillEffect();
+      effect.description  = this.description.clone();
+      for (int i = 0; i < values.size(); i++) {
+        SkillValue value = values.get(i);
+        int factor = level - 1;
+        if (type == SkillType.ITEM && level == levelMax) {
+          factor = level + 1;
+        }
+        effect.description.setEn(effect.description.getEn().replace("{" + i + "}", String.valueOf(value.init + (value.growth * factor))));
+        effect.description.setKr(effect.description.getKr().replace("{" + i + "}", String.valueOf(value.init + (value.growth * factor))));
+      }
+      effect.level = level;
+      this.effects.add(effect);
+    }
+  }
+
+
+
+  class SkillValue {
     private float init;
     private float growth;
+  }
+
+  class Range {
+    private int min;
+    private int max;
+  }
+
+  class SkillEffect {
+    private int level;
+    private Text description;
   }
 }

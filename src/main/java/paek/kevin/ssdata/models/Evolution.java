@@ -32,6 +32,18 @@ public class Evolution extends Model {
     return true;
   }
 
+  public List<Material> getMaterials() {
+    return materials;
+  }
+
+  public int getResult() {
+    return result;
+  }
+
+  public int getCost() {
+    return cost;
+  }
+
   public class Material {
     private int count;
     private int character;

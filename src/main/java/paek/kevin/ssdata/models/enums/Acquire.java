@@ -3,7 +3,7 @@ package paek.kevin.ssdata.models.enums;
 import com.google.gson.annotations.SerializedName;
 
 public enum Acquire {
-  @SerializedName("Player")
+  @SerializedName("Player Draw")
   PLAYER_DRAW,
 
   @SerializedName("Story")

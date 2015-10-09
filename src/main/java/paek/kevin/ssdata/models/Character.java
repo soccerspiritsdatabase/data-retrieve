@@ -11,8 +11,7 @@ public class Character extends Model {
 
   private int imageId;
   transient private int chainId;
-  private CharacterChain chain;
-  private String nameId;
+  transient private String nameId;
   private int value;
   private Gender gender;
   private Element element;
@@ -27,18 +26,25 @@ public class Character extends Model {
   private Stat speed;
   private int price;
   private int baseGP;
-  private List<Integer> evolutionIds;
+  transient private int evolutionId;
   private List<WeatherImmunity> weatherImmunities;
-  private Skills skillIds;
-  private String illustratorId;
-  private String cvId;
-  private String storyId;
+  private Skills skills;
+  transient private String illustratorId;
+  transient private String cvId;
+  transient private String storyId;
   private CharacterType characterType;
   private List<Acquire> acquire;
   private boolean legend;
   private boolean special;
   private int season;
   private List<Integer> skins;
+
+  private CharacterChain chain;
+  private Text name;
+  private Text illustrator;
+  private Text cv;
+  private Text story;
+  private Evolution evolution;
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
@@ -103,13 +109,9 @@ public class Character extends Model {
     // bonusRate
     br.readInt32();
 
-    evolutionIds = new ArrayList<Integer>();
-    for (int i = 0; i < 2; i++) {
-      int evolution = br.readInt32();
-      if (evolution != 0) {
-        evolutionIds.add(evolution);
-      }
-    }
+    evolutionId = br.readInt32();
+    // evolutionId2
+    br.readInt32();
 
     weatherImmunities = new ArrayList<WeatherImmunity>();
     for (int i = 0; i < 2; i++) {
@@ -119,14 +121,14 @@ public class Character extends Model {
       }
     }
 
-    skillIds = new Skills();
-    skillIds.ace = br.readInt32();
-    skillIds.active = br.readInt32();
-    skillIds.passives = new ArrayList<Integer>();
+    skills = new Skills();
+    skills.aceId = br.readInt32();
+    skills.activeId = br.readInt32();
+    skills.passiveIds = new ArrayList<Integer>();
     for (int i = 0; i < 3; i++) {
       int skill = br.readInt32();
       if (skill != 0) {
-        skillIds.passives.add(skill);
+        skills.passiveIds.add(skill);
       }
     }
 
@@ -171,8 +173,120 @@ public class Character extends Model {
     return true;
   }
 
+  public int getImageId() {
+    return imageId;
+  }
+
   public int getChainId() {
     return chainId;
+  }
+
+  public String getNameId() {
+    return nameId;
+  }
+
+  public int getValue() {
+    return value;
+  }
+
+  public Gender getGender() {
+    return gender;
+  }
+
+  public Element getElement() {
+    return element;
+  }
+
+  public List<Element> getStoneElements() {
+    return stoneElements;
+  }
+
+  public List<Position> getPositions() {
+    return positions;
+  }
+
+  public PlayerType getType() {
+    return type;
+  }
+
+  public int getTeamId() {
+    return teamId;
+  }
+
+  public int getCost() {
+    return cost;
+  }
+
+  public Stat getPower() {
+    return power;
+  }
+
+  public Stat getTechnique() {
+    return technique;
+  }
+
+  public Stat getVitality() {
+    return vitality;
+  }
+
+  public Stat getSpeed() {
+    return speed;
+  }
+
+  public int getPrice() {
+    return price;
+  }
+
+  public int getBaseGP() {
+    return baseGP;
+  }
+
+  public int getEvolutionId() {
+    return evolutionId;
+  }
+
+  public List<WeatherImmunity> getWeatherImmunities() {
+    return weatherImmunities;
+  }
+
+  public Skills getSkills() {
+    return skills;
+  }
+
+  public String getIllustratorId() {
+    return illustratorId;
+  }
+
+  public String getCvId() {
+    return cvId;
+  }
+
+  public String getStoryId() {
+    return storyId;
+  }
+
+  public CharacterType getCharacterType() {
+    return characterType;
+  }
+
+  public List<Acquire> getAcquire() {
+    return acquire;
+  }
+
+  public boolean isLegend() {
+    return legend;
+  }
+
+  public boolean isSpecial() {
+    return special;
+  }
+
+  public int getSeason() {
+    return season;
+  }
+
+  public List<Integer> getSkins() {
+    return skins;
   }
 
   public CharacterChain getChain() {
@@ -183,14 +297,94 @@ public class Character extends Model {
     this.chain = chain;
   }
 
+  public Text getName() {
+    return name;
+  }
+
+  public void setName(Text name) {
+    this.name = name;
+  }
+
+  public Text getIllustrator() {
+    return illustrator;
+  }
+
+  public void setIllustrator(Text illustrator) {
+    this.illustrator = illustrator;
+  }
+
+  public Text getCv() {
+    return cv;
+  }
+
+  public void setCv(Text cv) {
+    this.cv = cv;
+  }
+
+  public Text getStory() {
+    return story;
+  }
+
+  public void setStory(Text story) {
+    this.story = story;
+  }
+
+  public Evolution getEvolution() {
+    return evolution;
+  }
+
+  public void setEvolution(Evolution evolution) {
+    this.evolution = evolution;
+  }
+
   class Stat {
     private int min;
     private int max;
   }
 
-  class Skills {
-    private int ace;
-    private int active;
-    private List<Integer> passives;
+  public class Skills {
+    transient private int aceId;
+    transient private int activeId;
+    transient private List<Integer> passiveIds;
+
+    private Skill ace;
+    private Skill active;
+    private List<Skill> passives;
+
+    public int getAceId() {
+      return aceId;
+    }
+
+    public int getActiveId() {
+      return activeId;
+    }
+
+    public List<Integer> getPassiveIds() {
+      return passiveIds;
+    }
+
+    public Skill getAce() {
+      return ace;
+    }
+
+    public void setAce(Skill ace) {
+      this.ace = ace;
+    }
+
+    public Skill getActive() {
+      return active;
+    }
+
+    public void setActive(Skill active) {
+      this.active = active;
+    }
+
+    public List<Skill> getPassives() {
+      return passives;
+    }
+
+    public void setPassives(List<Skill> passives) {
+      this.passives = passives;
+    }
   }
 }
