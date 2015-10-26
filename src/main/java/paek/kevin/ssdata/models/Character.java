@@ -329,4 +329,27 @@ public class Character extends Model {
     this.inCollection = inCollection;
   }
 
+  public boolean isPlayer() {
+    return isPlayer;
+  }
+
+  public void setIsPlayer(boolean isPlayer) {
+    this.isPlayer = isPlayer;
+  }
+
+  public boolean isManager() {
+    return isManager;
+  }
+
+  public void setIsManager(boolean isManager) {
+    this.isManager = isManager;
+  }
+
+  public boolean isOther() {
+    return isOther;
+  }
+
+  public void setIsOther(boolean isOther) {
+    this.isOther = isOther;
+  }
 }
