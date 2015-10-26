@@ -171,11 +171,8 @@ public class DownloadFiles {
 
   private static void deletePath(Path path) throws IOException {
     if (Files.isDirectory(path)) {
-      try(DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-        for (Path entry : stream) {
-          deletePath(entry);
-        }
-        stream.close();
+      for (File file : path.toFile().listFiles()) {
+        deletePath(file.toPath());
       }
     }
     Files.delete(path);

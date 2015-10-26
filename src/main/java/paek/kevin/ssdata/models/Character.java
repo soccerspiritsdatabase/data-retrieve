@@ -86,10 +86,10 @@ public class Character extends Model {
     teamId = br.readInt32();
     cost = br.readInt32();
 
-    power = new HashMap<>();
-    technique = new HashMap<>();
-    vitality = new HashMap<>();
-    speed = new HashMap<>();
+    power = new HashMap<String, Integer>();
+    technique = new HashMap<String, Integer>();
+    vitality = new HashMap<String, Integer>();
+    speed = new HashMap<String, Integer>();
 
     power.put("min", br.readInt32());
     technique.put("min", br.readInt32());
@@ -124,10 +124,10 @@ public class Character extends Model {
       }
     }
 
-    skills = new HashMap<>();
+    skills = new HashMap<String, Object>();
     skills.put("ace", br.readInt32());
     skills.put("active", br.readInt32());
-    List<Integer> passives = new ArrayList<>();
+    List<Integer> passives = new ArrayList<Integer>();
     skills.put("passives", passives);
     for (int i = 0; i < 3; i++) {
       int skill = br.readInt32();
