@@ -11,8 +11,6 @@ import java.io.IOException;
 
 public class PatchFile {
 
-  private static final HttpClient HTTP_CLIENT = HttpClients.createDefault();
-
   private String path;
   private String fileName;
   private String version;
@@ -24,12 +22,6 @@ public class PatchFile {
     this.version = version;
 
     this.downloadUrl = String.format("%sver%s/%s/%s.scab", Config.BASE_URL, version, path, fileName);
-  }
-
-  public byte[] download() throws IOException {
-    HttpGet httpGet = new HttpGet(downloadUrl);
-    HttpResponse httpResponse = HTTP_CLIENT.execute(httpGet);
-    return IOUtils.toByteArray(httpResponse.getEntity().getContent());
   }
 
   public String getPath() {

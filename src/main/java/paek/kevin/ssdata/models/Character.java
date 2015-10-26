@@ -4,8 +4,7 @@ import paek.kevin.ssdata.models.enums.*;
 import paek.kevin.ssdata.utils.BinaryReaderDotNet;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Character extends Model {
 
@@ -20,22 +19,22 @@ public class Character extends Model {
   private PlayerType type;
   private int teamId;
   private int cost;
-  private Stat power;
-  private Stat technique;
-  private Stat vitality;
-  private Stat speed;
+  private Map<String, Integer> power;
+  private Map<String, Integer> technique;
+  private Map<String, Integer> vitality;
+  private Map<String, Integer> speed;
   private int price;
   private int baseGP;
   transient private int evolutionId;
   private List<WeatherImmunity> weatherImmunities;
-  private Skills skills;
+  private Map<String, Object> skills;
   transient private String illustratorId;
   transient private String cvId;
   transient private String storyId;
   private CharacterType characterType;
   private List<Acquire> acquire;
-  private boolean legend;
-  private boolean special;
+  private boolean isLegend;
+  private boolean isSpecial;
   private int season;
   private List<Integer> skins;
 
@@ -45,6 +44,10 @@ public class Character extends Model {
   private Text cv;
   private Text story;
   private Evolution evolution;
+  private boolean inCollection;
+  private boolean isPlayer;
+  private boolean isManager;
+  private boolean isOther;
 
   @Override
   public boolean read(BinaryReaderDotNet br) throws IOException {
@@ -83,20 +86,20 @@ public class Character extends Model {
     teamId = br.readInt32();
     cost = br.readInt32();
 
-    power = new Stat();
-    technique = new Stat();
-    vitality = new Stat();
-    speed = new Stat();
+    power = new HashMap<>();
+    technique = new HashMap<>();
+    vitality = new HashMap<>();
+    speed = new HashMap<>();
 
-    power.min = br.readInt32();
-    technique.min = br.readInt32();
-    vitality.min = br.readInt32();
-    speed.min = br.readInt32();
+    power.put("min", br.readInt32());
+    technique.put("min", br.readInt32());
+    vitality.put("min", br.readInt32());
+    speed.put("min", br.readInt32());
 
-    power.max = br.readInt32();
-    technique.max = br.readInt32();
-    vitality.max = br.readInt32();
-    speed.max = br.readInt32();
+    power.put("max", br.readInt32());
+    technique.put("max", br.readInt32());
+    vitality.put("max", br.readInt32());
+    speed.put("max", br.readInt32());
 
     price = br.readInt32();
     // noneElemental
@@ -121,14 +124,15 @@ public class Character extends Model {
       }
     }
 
-    skills = new Skills();
-    skills.aceId = br.readInt32();
-    skills.activeId = br.readInt32();
-    skills.passiveIds = new ArrayList<Integer>();
+    skills = new HashMap<>();
+    skills.put("ace", br.readInt32());
+    skills.put("active", br.readInt32());
+    List<Integer> passives = new ArrayList<>();
+    skills.put("passives", passives);
     for (int i = 0; i < 3; i++) {
       int skill = br.readInt32();
       if (skill != 0) {
-        skills.passiveIds.add(skill);
+        passives.add(skill);
       }
     }
 
@@ -150,7 +154,7 @@ public class Character extends Model {
 
     // _7
     br.readInt32();
-    legend = br.readInt32() != 0;
+    isLegend = br.readInt32() != 0;
 
     // eventTypes
     for (int i = 0; i < 4; i++) {
@@ -159,7 +163,7 @@ public class Character extends Model {
 
     // taq
     br.readInt32();
-    special = br.readInt32() != 0;
+    isSpecial = br.readInt32() != 0;
     season = br.readInt32();
 
     skins = new ArrayList<Integer>();
@@ -217,22 +221,6 @@ public class Character extends Model {
     return cost;
   }
 
-  public Stat getPower() {
-    return power;
-  }
-
-  public Stat getTechnique() {
-    return technique;
-  }
-
-  public Stat getVitality() {
-    return vitality;
-  }
-
-  public Stat getSpeed() {
-    return speed;
-  }
-
   public int getPrice() {
     return price;
   }
@@ -247,10 +235,6 @@ public class Character extends Model {
 
   public List<WeatherImmunity> getWeatherImmunities() {
     return weatherImmunities;
-  }
-
-  public Skills getSkills() {
-    return skills;
   }
 
   public String getIllustratorId() {
@@ -274,11 +258,11 @@ public class Character extends Model {
   }
 
   public boolean isLegend() {
-    return legend;
+    return isLegend;
   }
 
   public boolean isSpecial() {
-    return special;
+    return isSpecial;
   }
 
   public int getSeason() {
@@ -337,54 +321,12 @@ public class Character extends Model {
     this.evolution = evolution;
   }
 
-  class Stat {
-    private int min;
-    private int max;
+  public boolean isInCollection() {
+    return inCollection;
   }
 
-  public class Skills {
-    transient private int aceId;
-    transient private int activeId;
-    transient private List<Integer> passiveIds;
-
-    private Skill ace;
-    private Skill active;
-    private List<Skill> passives;
-
-    public int getAceId() {
-      return aceId;
-    }
-
-    public int getActiveId() {
-      return activeId;
-    }
-
-    public List<Integer> getPassiveIds() {
-      return passiveIds;
-    }
-
-    public Skill getAce() {
-      return ace;
-    }
-
-    public void setAce(Skill ace) {
-      this.ace = ace;
-    }
-
-    public Skill getActive() {
-      return active;
-    }
-
-    public void setActive(Skill active) {
-      this.active = active;
-    }
-
-    public List<Skill> getPassives() {
-      return passives;
-    }
-
-    public void setPassives(List<Skill> passives) {
-      this.passives = passives;
-    }
+  public void setInCollection(boolean inCollection) {
+    this.inCollection = inCollection;
   }
+
 }

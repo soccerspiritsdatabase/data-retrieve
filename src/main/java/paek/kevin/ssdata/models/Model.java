@@ -25,7 +25,7 @@ public class Model {
     return map;
   }
 
-  transient protected Comparable id;
+  protected Comparable id;
 
   public boolean read(BinaryReaderDotNet br) throws IOException {
     return true;

@@ -2,5 +2,5 @@ target
 .idea
 *.iml
 
-json_files
-raw_files
+bin
+tools/disunity

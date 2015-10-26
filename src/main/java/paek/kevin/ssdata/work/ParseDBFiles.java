@@ -6,6 +6,7 @@ import org.apache.commons.io.Charsets;
 import paek.kevin.ssdata.Config;
 import paek.kevin.ssdata.models.*;
 import paek.kevin.ssdata.models.Character;
+import paek.kevin.ssdata.models.enums.CharacterType;
 import paek.kevin.ssdata.utils.BinaryReaderDotNet;
 
 import java.io.IOException;
@@ -13,11 +14,11 @@ import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.util.*;
 
-public class ParseDBFiles implements Worker {
+public class ParseDBFiles {
 
-  private final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+  private static final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
-  public void doWork() {
+  public static void process() {
     System.out.println("----------------------------------------");
     System.out.println("Parsing models");
     Map<Object, Text> texts = Model.merge(
@@ -27,75 +28,68 @@ public class ParseDBFiles implements Worker {
     Map<Object, Evolution> evolutions = parseModel("Evolutions", Evolution.class);
     Map<Object, CharacterCollection> characterCollections = parseModel("Collections", CharacterCollection.class);
     Map<Object, CharacterChain> characterChains = parseModel("CharacterChs", CharacterChain.class);
-    Map<Object, paek.kevin.ssdata.models.Character> characters = parseModel("Characters", paek.kevin.ssdata.models.Character.class);
+    Map<Object, Character> characters = parseModel("Characters", Character.class);
     Map<Object, SpiritStone> spiritStones = parseModel("Items", SpiritStone.class);
     Map<Object, SpiritStoneCollection> spiritStoneCollections = parseModel("ItemCollections", SpiritStoneCollection.class);
     Map<Object, Skill> skills = parseModel("Skills", Skill.class);
 
     System.out.println("Combining references");
-    // get valid characters based on CharacterCollections
-    Set<Integer> validCharacterIds = new LinkedHashSet<Integer>();
+
+    System.out.println("\tCalculate set of valid characters");
+    Set<Integer> charactersInCollection = new LinkedHashSet<Integer>();
     for (CharacterCollection characterCollection : characterCollections.values()) {
       for (List<Integer> ids : characterCollection.getCharacterGroups()) {
         for (Integer id : ids) {
-          validCharacterIds.add(id);
+          charactersInCollection.add(id);
         }
       }
     }
 
-    Set<Integer> validSkillIds = new LinkedHashSet<Integer>();
-
+    System.out.println("\tJoin Character fields");
     for (Iterator<Map.Entry<Object, Character>> iterator = characters.entrySet().iterator(); iterator.hasNext();) {
       Map.Entry<Object, Character> entry = iterator.next();
       Character character = entry.getValue();
-      // filter out invalid characters
-      if (validCharacterIds.contains(character.getId())) {
-        // link fields
-        character.setName(texts.get(character.getNameId()));
-        character.setChain(characterChains.get(character.getChainId()));
-        character.setIllustrator(texts.get(character.getIllustratorId()));
-        character.setCv(texts.get(character.getCvId()));
-        character.setStory(texts.get(character.getStoryId()));
-        character.setEvolution(evolutions.get(character.getEvolutionId()));
-        {
-          Character.Skills skillIds = character.getSkills();
-          skillIds.setAce(skills.get(skillIds.getAceId()));
-          validSkillIds.add(skillIds.getAceId());
-          skillIds.setActive(skills.get(skillIds.getActiveId()));
-          validSkillIds.add(skillIds.getActiveId());
-          skillIds.setPassives(new ArrayList<Skill>());
-          for (Integer id : skillIds.getPassiveIds()) {
-            skillIds.getPassives().add(skills.get(id));
-            validSkillIds.add(id);
-          }
-        }
-      } else {
-        // remove invalid character
-        iterator.remove();
-      }
+      character.setName(texts.get(character.getNameId()));
+      character.setChain(characterChains.get(character.getChainId()));
+      character.setIllustrator(texts.get(character.getIllustratorId()));
+      character.setCv(texts.get(character.getCvId()));
+      character.setStory(texts.get(character.getStoryId()));
+      character.setEvolution(evolutions.get(character.getEvolutionId()));
+      character.setInCollection(charactersInCollection.contains(character.getId()));
+      character.setIsPlayer(CharacterType.PLAYER.equals(character.getCharacterType()));
+      character.setIsManager(CharacterType.MANAGER.equals(character.getCharacterType()));
+      character.setIsOther(CharacterType.OTHER.equals(character.getCharacterType()));
     }
 
+    System.out.println("\tJoin Spirit Stone fields");
     for (Iterator<Map.Entry<Object, SpiritStone>> iterator = spiritStones.entrySet().iterator(); iterator.hasNext();) {
       Map.Entry<Object, SpiritStone> entry = iterator.next();
       SpiritStone spiritStone = entry.getValue();
-      // link fields
       spiritStone.setName(texts.get(spiritStone.getNameId()));
-      spiritStone.setSkills(new ArrayList<Skill>());
-      for (Integer id : spiritStone.getSkillIds()) {
-        spiritStone.getSkills().add(skills.get(id));
-        validSkillIds.add(id);
-      }
     }
 
+    System.out.println("\tCalculate set of valid skills");
+    Set<Integer> validSkillIds = new LinkedHashSet<Integer>();
+    // skills from characters
     for (Iterator<Map.Entry<Object, Skill>> iterator = skills.entrySet().iterator(); iterator.hasNext();) {
       Map.Entry<Object, Skill> entry = iterator.next();
       Skill skill = entry.getValue();
-      if (validSkillIds.contains(skill.getId())) {
-        // link fields
-        skill.setName(texts.get(skill.getNameId()));
-        skill.setDescription(texts.get(skill.getDescId()));
-      } else {
+      if (!validSkillIds.contains(skill.getId())) {
         iterator.remove();
+      }
+    }
+
+    System.out.println("\tJoin Skill fields");
+    for (Iterator<Map.Entry<Object, Skill>> iterator = skills.entrySet().iterator(); iterator.hasNext();) {
+      Map.Entry<Object, Skill> entry = iterator.next();
+      Skill skill = entry.getValue();
+      Text name = texts.get(skill.getNameId());
+      Text description = texts.get(skill.getDescId());
+      if (name == null || description == null) {
+        iterator.remove();
+      } else {
+        skill.setName(name);
+        skill.setDescription(description);
       }
     }
 
@@ -115,7 +109,7 @@ public class ParseDBFiles implements Worker {
     }
   }
 
-  private <T extends Model> Map<Object, T> parseModel(String fileName, Class<T> modelClass) {
+  private static <T extends Model> Map<Object, T> parseModel(String fileName, Class<T> modelClass) {
     System.out.println(fileName);
     List<T> modelsList = new ArrayList<T>();
     try {
