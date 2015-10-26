@@ -3,7 +3,7 @@ package paek.kevin.ssdata.models.enums;
 import com.google.gson.annotations.SerializedName;
 
 public enum CharacterType {
-  @SerializedName("Character")
+  @SerializedName("Player")
   PLAYER,
 
   @SerializedName("Manager")
