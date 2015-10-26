@@ -62,7 +62,7 @@ public class DownloadFiles {
       if (node.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) node;
         PatchFile patchFile = new PatchFile(element.getAttribute("Path"), element.getAttribute("FileName"), element.getAttribute("Version"));
-        if ("Cards".equals(patchFile.getPath())) {
+        if ("Cards".equals(patchFile.getPath()) && patchFile.getFileName().contains("_CS")) {
           cardFiles.add(patchFile);
         } else if ("DB".equals(patchFile.getPath())) {
           if (Config.DB_FILES.contains(patchFile.getFileName())) {
