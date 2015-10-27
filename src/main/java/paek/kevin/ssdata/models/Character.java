@@ -26,10 +26,11 @@ public class Character extends Model {
   private int price;
   private int baseGP;
   transient private int evolutionId;
-  private List<WeatherImmunity> weatherImmunities;
+  private WeatherImmunity weatherImmunity;
   private Skills skills;
   transient private String illustratorId;
   transient private String cvId;
+  private int iconSeason;
   transient private String storyId;
   private CharacterType characterType;
   private List<Acquire> acquire;
@@ -44,7 +45,6 @@ public class Character extends Model {
   private Text cv;
   private Text story;
   private Evolution evolution;
-  private boolean inCollection;
   private boolean isPlayer;
   private boolean isManager;
   private boolean isOther;
@@ -119,13 +119,9 @@ public class Character extends Model {
     // evolutionId2
     br.readInt32();
 
-    weatherImmunities = new ArrayList<WeatherImmunity>();
-    for (int i = 0; i < 2; i++) {
-      WeatherImmunity weatherImmunity = WeatherImmunity.valueOf(br.readInt32());
-      if (!weatherImmunity.equals(WeatherImmunity.UNKNOWN)) {
-        weatherImmunities.add(weatherImmunity);
-      }
-    }
+    weatherImmunity = WeatherImmunity.valueOf(br.readInt32());
+    // weather immunity 2
+    br.readInt32();
 
     skills = new Skills(
             // ace
@@ -142,7 +138,7 @@ public class Character extends Model {
     cvId = br.readString();
     storyId = br.readString();
     // season
-    br.readInt32();
+    iconSeason = br.readInt32();
     // rotation
     br.readInt32();
     characterType = CharacterType.valueOf(br.readInt32());
@@ -235,8 +231,8 @@ public class Character extends Model {
     return evolutionId;
   }
 
-  public List<WeatherImmunity> getWeatherImmunities() {
-    return weatherImmunities;
+  public WeatherImmunity getWeatherImmunity() {
+    return weatherImmunity;
   }
 
   public Skills getSkills() {
@@ -325,14 +321,6 @@ public class Character extends Model {
 
   public void setEvolution(Evolution evolution) {
     this.evolution = evolution;
-  }
-
-  public boolean isInCollection() {
-    return inCollection;
-  }
-
-  public void setInCollection(boolean inCollection) {
-    this.inCollection = inCollection;
   }
 
   public boolean isPlayer() {

@@ -44,6 +44,14 @@ public class ParseDBFiles {
         }
       }
     }
+    // remove characters not in collection
+    for (Iterator<Map.Entry<Object, Character>> iterator = characters.entrySet().iterator(); iterator.hasNext();) {
+      Map.Entry<Object, Character> entry = iterator.next();
+      Character character = entry.getValue();
+      if (!charactersInCollection.contains(character.getId())) {
+        iterator.remove();
+      }
+    }
 
     System.out.println("\tJoin Character fields");
     for (Iterator<Map.Entry<Object, Character>> iterator = characters.entrySet().iterator(); iterator.hasNext();) {
@@ -54,8 +62,13 @@ public class ParseDBFiles {
       character.setIllustrator(texts.get(character.getIllustratorId()));
       character.setCv(texts.get(character.getCvId()));
       character.setStory(texts.get(character.getStoryId()));
-      character.setEvolution(evolutions.get(character.getEvolutionId()));
-      character.setInCollection(charactersInCollection.contains(character.getId()));
+
+      Evolution evolution = evolutions.get(character.getEvolutionId());
+      if (evolution != null) {
+        character.setEvolution(evolution);
+        evolution.setPreResult(Integer.parseInt(String.valueOf(character.getId())));
+      }
+
       character.setIsPlayer(CharacterType.PLAYER.equals(character.getCharacterType()));
       character.setIsManager(CharacterType.MANAGER.equals(character.getCharacterType()));
       character.setIsOther(CharacterType.OTHER.equals(character.getCharacterType()));

@@ -10,9 +10,7 @@ public enum WeatherImmunity {
   PIERCING_WIND,
 
   @SerializedName("Soul Grave")
-  SOUL_GRAVE,
-
-  UNKNOWN;
+  SOUL_GRAVE;
 
   public static WeatherImmunity valueOf(int value) {
     switch (value) {
@@ -23,7 +21,7 @@ public enum WeatherImmunity {
       case 5:
         return WeatherImmunity.SOUL_GRAVE;
       default:
-        return WeatherImmunity.UNKNOWN;
+        return null;
     }
   }
 }

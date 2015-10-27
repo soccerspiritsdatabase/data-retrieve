@@ -100,7 +100,7 @@ public class DownloadFiles {
           Runtime.getRuntime().exec(String.format("cmd /c %s -i %s -f r8g8b8a8 -d", Config.PATH_PVR_TEX_TOOL, tempDir.resolve(cardFile.getFileName() + "_A.ktx"))).waitFor();
 
           System.out.println("\tMerging/Flipping/Scaling");
-          BufferedImage source = source = ImageIO.read(tempDir.resolve(cardFile.getFileName() + ".png").toFile());
+          BufferedImage source = ImageIO.read(tempDir.resolve(cardFile.getFileName() + ".png").toFile());
           BufferedImage mask = ImageIO.read(tempDir.resolve(cardFile.getFileName() + "_A.png").toFile());
 
           BufferedImage output = processImage(source, mask);

@@ -9,6 +9,7 @@ import java.util.List;
 public class Evolution extends Model {
 
   private List<Material> materials;
+  private int preResult;
   private int result;
   private int cost;
 
@@ -34,6 +35,14 @@ public class Evolution extends Model {
 
   public List<Material> getMaterials() {
     return materials;
+  }
+
+  public int getPreResult() {
+    return preResult;
+  }
+
+  public void setPreResult(int preResult) {
+    this.preResult = preResult;
   }
 
   public int getResult() {
