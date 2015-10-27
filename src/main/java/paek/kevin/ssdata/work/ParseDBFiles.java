@@ -71,6 +71,27 @@ public class ParseDBFiles {
     System.out.println("\tCalculate set of valid skills");
     Set<Integer> validSkillIds = new LinkedHashSet<Integer>();
     // skills from characters
+    for (Iterator<Map.Entry<Object, Character>> iterator = characters.entrySet().iterator(); iterator.hasNext();) {
+      Map.Entry<Object, Character> entry = iterator.next();
+      Character character = entry.getValue();
+
+      Character.Skills characterSkills = character.getSkills();
+      validSkillIds.add(characterSkills.getAce());
+      validSkillIds.add(characterSkills.getActive());
+      for (int id : characterSkills.getPassives()) {
+        validSkillIds.add(id);
+      }
+    }
+    // skills from spirit stones
+    for (Iterator<Map.Entry<Object, SpiritStone>> iterator = spiritStones.entrySet().iterator(); iterator.hasNext();) {
+      Map.Entry<Object, SpiritStone> entry = iterator.next();
+      SpiritStone spiritStone = entry.getValue();
+      for (Integer id : spiritStone.getSkills()) {
+        validSkillIds.add(id);
+      }
+    }
+
+    // remove invalid skills
     for (Iterator<Map.Entry<Object, Skill>> iterator = skills.entrySet().iterator(); iterator.hasNext();) {
       Map.Entry<Object, Skill> entry = iterator.next();
       Skill skill = entry.getValue();

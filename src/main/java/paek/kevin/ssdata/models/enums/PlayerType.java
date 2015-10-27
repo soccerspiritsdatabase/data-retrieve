@@ -16,9 +16,7 @@ public enum PlayerType {
   STRIKER,
 
   @SerializedName("Assist")
-  ASSIST,
-
-  UNKNOWN;
+  ASSIST;
 
   public static PlayerType valueOf(int value) {
     switch (value) {
@@ -33,7 +31,7 @@ public enum PlayerType {
       case 5:
         return PlayerType.ASSIST;
       default:
-        return PlayerType.UNKNOWN;
+        return null;
     }
   }
 }

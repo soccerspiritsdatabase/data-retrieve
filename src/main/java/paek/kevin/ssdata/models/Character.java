@@ -27,7 +27,7 @@ public class Character extends Model {
   private int baseGP;
   transient private int evolutionId;
   private List<WeatherImmunity> weatherImmunities;
-  private Map<String, Object> skills;
+  private Skills skills;
   transient private String illustratorId;
   transient private String cvId;
   transient private String storyId;
@@ -69,6 +69,9 @@ public class Character extends Model {
       if (!element.equals(Element.UNKNOWN)) {
         stoneElements.add(element);
       }
+    }
+    if (stoneElements.size() == 0) {
+      stoneElements = null;
     }
 
     // position
@@ -124,17 +127,16 @@ public class Character extends Model {
       }
     }
 
-    skills = new HashMap<String, Object>();
-    skills.put("ace", br.readInt32());
-    skills.put("active", br.readInt32());
-    List<Integer> passives = new ArrayList<Integer>();
-    skills.put("passives", passives);
-    for (int i = 0; i < 3; i++) {
-      int skill = br.readInt32();
-      if (skill != 0) {
-        passives.add(skill);
-      }
-    }
+    skills = new Skills(
+            // ace
+            br.readInt32(),
+            // active
+            br.readInt32(),
+            // passives
+            br.readInt32(),
+            br.readInt32(),
+            br.readInt32()
+    );
 
     illustratorId = br.readString();
     cvId = br.readString();
@@ -235,6 +237,10 @@ public class Character extends Model {
 
   public List<WeatherImmunity> getWeatherImmunities() {
     return weatherImmunities;
+  }
+
+  public Skills getSkills() {
+    return skills;
   }
 
   public String getIllustratorId() {
@@ -352,4 +358,29 @@ public class Character extends Model {
   public void setIsOther(boolean isOther) {
     this.isOther = isOther;
   }
+
+  public class Skills {
+    private int ace;
+    private int active;
+    private int[] passives;
+
+    Skills(int ace, int active, int ...passives) {
+      this.ace = ace;
+      this.active = active;
+      this.passives = passives;
+    }
+
+    public int getAce() {
+      return ace;
+    }
+
+    public int getActive() {
+      return active;
+    }
+
+    public int[] getPassives() {
+      return passives;
+    }
+  }
+
 }
