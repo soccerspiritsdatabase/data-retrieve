@@ -24,6 +24,7 @@ public class Character extends Model {
   private Map<String, Integer> vitality;
   private Map<String, Integer> speed;
   private int price;
+  private float growType;
   private int baseGP;
   transient private int evolutionId;
   private WeatherImmunity weatherImmunity;
@@ -107,8 +108,7 @@ public class Character extends Model {
     price = br.readInt32();
     // noneElemental
     br.readInt32();
-    // growType
-    br.readSingle();
+    growType = br.readSingle();
     // baseExp
     br.readInt32();
     baseGP = br.readInt32();
