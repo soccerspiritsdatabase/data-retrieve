@@ -350,12 +350,17 @@ public class Character extends Model {
   public class Skills {
     private int ace;
     private int active;
-    private int[] passives;
+    private List<Integer> passives;
 
     Skills(int ace, int active, int ...passives) {
       this.ace = ace;
       this.active = active;
-      this.passives = passives;
+      this.passives = new ArrayList<Integer>();
+      for (int passive : passives) {
+        if (passive != 0) {
+          this.passives.add(passive);
+        }
+      }
     }
 
     public int getAce() {
@@ -366,7 +371,7 @@ public class Character extends Model {
       return active;
     }
 
-    public int[] getPassives() {
+    public List<Integer> getPassives() {
       return passives;
     }
   }
