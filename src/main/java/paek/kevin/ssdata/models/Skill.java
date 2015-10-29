@@ -169,8 +169,10 @@ public class Skill extends Model {
         if (type == SkillType.ITEM && level == levelMax) {
           factor = level + 1;
         }
-        effect.description.setEn(effect.description.getEn().replace("{" + i + "}", String.valueOf(value.init + (value.growth * factor))));
-        effect.description.setKr(effect.description.getKr().replace("{" + i + "}", String.valueOf(value.init + (value.growth * factor))));
+        float calcValue = value.init + (value.growth * factor);
+        String calcValueStr = (calcValue == (int) calcValue) ? String.format("%d", (int) calcValue) : String.format("%s", calcValue);
+        effect.description.setEn(effect.description.getEn().replace("{" + i + "}", calcValueStr));
+        effect.description.setKr(effect.description.getKr().replace("{" + i + "}", calcValueStr));
       }
       effect.level = level;
       this.effects.add(effect);
