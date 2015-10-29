@@ -63,9 +63,8 @@ public class ParseDBFiles {
       character.setCv(texts.get(character.getCvId()));
       character.setStory(texts.get(character.getStoryId()));
 
-      Evolution evolution = evolutions.get(character.getEvolutionId());
+      Evolution evolution = evolutions.get(character.getEvolution());
       if (evolution != null) {
-        character.setEvolution(evolution);
         evolution.setPreResult(Integer.parseInt(String.valueOf(character.getId())));
       }
 

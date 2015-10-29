@@ -26,7 +26,7 @@ public class Character extends Model {
   private int price;
   private float growType;
   private int baseGP;
-  transient private int evolutionId;
+  private int evolution;
   private WeatherImmunity weatherImmunity;
   private Skills skills;
   transient private String illustratorId;
@@ -45,7 +45,6 @@ public class Character extends Model {
   private Text illustrator;
   private Text cv;
   private Text story;
-  private Evolution evolution;
   private boolean isPlayer;
   private boolean isManager;
   private boolean isOther;
@@ -115,7 +114,7 @@ public class Character extends Model {
     // bonusRate
     br.readInt32();
 
-    evolutionId = br.readInt32();
+    evolution = br.readInt32();
     // evolutionId2
     br.readInt32();
 
@@ -227,8 +226,8 @@ public class Character extends Model {
     return baseGP;
   }
 
-  public int getEvolutionId() {
-    return evolutionId;
+  public int getEvolution() {
+    return evolution;
   }
 
   public WeatherImmunity getWeatherImmunity() {
@@ -313,14 +312,6 @@ public class Character extends Model {
 
   public void setStory(Text story) {
     this.story = story;
-  }
-
-  public Evolution getEvolution() {
-    return evolution;
-  }
-
-  public void setEvolution(Evolution evolution) {
-    this.evolution = evolution;
   }
 
   public boolean isPlayer() {
