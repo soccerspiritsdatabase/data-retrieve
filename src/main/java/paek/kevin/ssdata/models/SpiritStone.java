@@ -18,7 +18,7 @@ public class SpiritStone extends Model {
   private List<Integer> skills;
   private String iconImage;
   private SpiritStoneZodiac zodiac;
-  private int evolutionId;
+  private int evolution;
 
   private Text name;
 
@@ -46,7 +46,7 @@ public class SpiritStone extends Model {
     br.readInt32();
     iconImage = br.readString();
     zodiac = SpiritStoneZodiac.valueOf(br.readInt32());
-    evolutionId = br.readInt32();
+    evolution = br.readInt32();
 
     return true;
   }
@@ -79,8 +79,8 @@ public class SpiritStone extends Model {
     return zodiac;
   }
 
-  public int getEvolutionId() {
-    return evolutionId;
+  public int getEvolution() {
+    return evolution;
   }
 
   public Text getName() {
