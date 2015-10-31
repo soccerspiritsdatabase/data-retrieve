@@ -126,10 +126,8 @@ public class ParseDBFiles {
     System.out.println("Writing json files");
     try {
       Files.createDirectories(Config.JSON_FILES_DIR);
-      Files.write(Config.JSON_FILES_DIR.resolve("texts.json"), Arrays.asList(gson.toJson(texts)), Charsets.ISO_8859_1);
       Files.write(Config.JSON_FILES_DIR.resolve("evolutions.json"), Arrays.asList(gson.toJson(evolutions)));
       Files.write(Config.JSON_FILES_DIR.resolve("characterCollections.json"), Arrays.asList(gson.toJson(characterCollections)));
-      Files.write(Config.JSON_FILES_DIR.resolve("characterChains.json"), Arrays.asList(gson.toJson(characterChains)));
       Files.write(Config.JSON_FILES_DIR.resolve("characters.json"), Arrays.asList(gson.toJson(characters)), Charsets.ISO_8859_1);
       Files.write(Config.JSON_FILES_DIR.resolve("spiritStones.json"), Arrays.asList(gson.toJson(spiritStones)), Charsets.ISO_8859_1);
       Files.write(Config.JSON_FILES_DIR.resolve("spiritStoneCollections.json"), Arrays.asList(gson.toJson(spiritStoneCollections)));
