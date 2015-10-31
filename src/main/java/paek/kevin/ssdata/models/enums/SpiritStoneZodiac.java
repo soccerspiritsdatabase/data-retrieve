@@ -39,6 +39,7 @@ public enum SpiritStoneZodiac {
   @SerializedName("Pisces")
   PISCES,
 
+  @SerializedName("")
   UNKNOWN;
 
   public static SpiritStoneZodiac valueOf(int value) {
