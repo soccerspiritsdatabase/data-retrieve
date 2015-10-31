@@ -154,8 +154,7 @@ public class Skill extends Model {
         levelMin = levelMax = 1;
         break;
       case ITEM:
-        levelMin = 0;
-        levelMax = 15;
+        levelMin = levelMax = 15;
         break;
     }
 
