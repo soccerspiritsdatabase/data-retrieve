@@ -7,6 +7,7 @@ import paek.kevin.ssdata.Config;
 import paek.kevin.ssdata.models.*;
 import paek.kevin.ssdata.models.Character;
 import paek.kevin.ssdata.models.enums.CharacterType;
+import paek.kevin.ssdata.models.enums.SkillType;
 import paek.kevin.ssdata.utils.BinaryReaderDotNet;
 
 import java.io.IOException;
@@ -116,14 +117,10 @@ public class ParseDBFiles {
     for (Iterator<Map.Entry<Object, Skill>> iterator = skills.entrySet().iterator(); iterator.hasNext();) {
       Map.Entry<Object, Skill> entry = iterator.next();
       Skill skill = entry.getValue();
-      Text name = texts.get(skill.getNameId());
-      Text description = texts.get(skill.getDescId());
-      if (name == null || description == null) {
-        iterator.remove();
-      } else {
-        skill.setName(name);
-        skill.setDescription(description);
+      if (!SkillType.ITEM.equals(skill.getType())) {
+        skill.setName(texts.get(skill.getNameId()));
       }
+      skill.setDescription(texts.get(skill.getDescId()));
     }
 
     System.out.println("Writing json files");
