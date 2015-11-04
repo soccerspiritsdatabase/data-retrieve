@@ -17,7 +17,7 @@ import java.util.*;
 
 public class ParseDBFiles {
 
-  private static final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+  private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
   public static Map<Object, Character> process() {
     System.out.println("----------------------------------------");
