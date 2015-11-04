@@ -9,7 +9,7 @@ import paek.kevin.ssdata.Config;
 
 import java.io.IOException;
 
-public class PatchFile {
+public class PatchFile implements Comparable<PatchFile> {
 
   private String path;
   private String fileName;
@@ -38,5 +38,9 @@ public class PatchFile {
 
   public String getDownloadUrl() {
     return downloadUrl;
+  }
+
+  public int compareTo(PatchFile o) {
+    return this.getFileName().compareTo(o.getFileName());
   }
 }

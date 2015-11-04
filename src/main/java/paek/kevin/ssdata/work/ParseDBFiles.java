@@ -19,7 +19,7 @@ public class ParseDBFiles {
 
   private static final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
-  public static void process() {
+  public static Map<Object, Character> process() {
     System.out.println("----------------------------------------");
     System.out.println("Parsing models");
     Map<Object, Text> texts = Model.merge(
@@ -49,7 +49,7 @@ public class ParseDBFiles {
     for (Iterator<Map.Entry<Object, Character>> iterator = characters.entrySet().iterator(); iterator.hasNext();) {
       Map.Entry<Object, Character> entry = iterator.next();
       Character character = entry.getValue();
-      if (!charactersInCollection.contains(character.getId())) {
+      if (character.getValue() < 2 || !charactersInCollection.contains(character.getId())) {
         iterator.remove();
       }
     }
@@ -135,6 +135,8 @@ public class ParseDBFiles {
     } catch (IOException e) {
       throw new RuntimeException(String.format("Failed to save json files"), e);
     }
+
+    return characters;
   }
 
   private static <T extends Model> Map<Object, T> parseModel(String fileName, Class<T> modelClass) {

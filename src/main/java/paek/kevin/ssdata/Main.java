@@ -10,8 +10,9 @@ import java.util.Map;
 public class Main {
 
   public static void main(String[] args) {
-    //DownloadFiles.process();
-    ParseDBFiles.process();
+    //DownloadFiles.getDbFiles();
+    Map<Object, Character> characters = ParseDBFiles.process();
+    DownloadFiles.getCardFiles(characters);
   }
 
 }

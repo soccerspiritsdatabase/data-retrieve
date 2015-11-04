@@ -142,7 +142,7 @@ public class Skill extends Model {
 
   public void setDescription(Text description) {
     this.description = description;
-    if (!".".equals(description.getEn().charAt(description.getEn().length() - 1))) {
+    if ('.' != description.getEn().charAt(description.getEn().length() - 1)) {
       description.setEn(description.getEn() + ".");
     }
 
