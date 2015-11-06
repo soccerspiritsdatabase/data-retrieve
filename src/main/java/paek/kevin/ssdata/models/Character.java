@@ -31,7 +31,6 @@ public class Character extends Model {
   private Skills skills;
   transient private String illustratorId;
   transient private String cvId;
-  private int iconSeason;
   transient private String storyId;
   private CharacterType characterType;
   private List<Acquire> acquire;
@@ -136,8 +135,8 @@ public class Character extends Model {
     illustratorId = br.readString();
     cvId = br.readString();
     storyId = br.readString();
-    // season
-    iconSeason = br.readInt32();
+    // icon season
+    br.readInt32();
     // rotation
     br.readInt32();
     characterType = CharacterType.valueOf(br.readInt32());
@@ -216,6 +215,22 @@ public class Character extends Model {
 
   public int getCost() {
     return cost;
+  }
+
+  public Map<String, Integer> getPower() {
+    return power;
+  }
+
+  public Map<String, Integer> getTechnique() {
+    return technique;
+  }
+
+  public Map<String, Integer> getVitality() {
+    return vitality;
+  }
+
+  public Map<String, Integer> getSpeed() {
+    return speed;
   }
 
   public int getPrice() {
@@ -368,3 +383,4 @@ public class Character extends Model {
   }
 
 }
+

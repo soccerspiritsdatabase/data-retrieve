@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.Charsets;
 import paek.kevin.ssdata.Config;
+import paek.kevin.ssdata.comparators.PowerStatComparator;
+import paek.kevin.ssdata.comparators.SpeedStatComparator;
+import paek.kevin.ssdata.comparators.TechniqueStatComparator;
+import paek.kevin.ssdata.comparators.VitalityStatComparator;
 import paek.kevin.ssdata.models.*;
 import paek.kevin.ssdata.models.Character;
 import paek.kevin.ssdata.models.enums.CharacterType;
@@ -73,6 +77,9 @@ public class ParseDBFiles {
       character.setIsManager(CharacterType.MANAGER.equals(character.getCharacterType()));
       character.setIsOther(CharacterType.OTHER.equals(character.getCharacterType()));
     }
+
+    System.out.println("\tCalculate stat rankings");
+    calculateStatRankings(characters);
 
     System.out.println("\tJoin Spirit Stone fields");
     for (Iterator<Map.Entry<Object, SpiritStone>> iterator = spiritStones.entrySet().iterator(); iterator.hasNext();) {
@@ -159,5 +166,42 @@ public class ParseDBFiles {
 
     System.out.println("\tDone");
     return Model.toMap(modelsList);
+  }
+
+  private static void calculateStatRankings(Map<Object, Character> characterMap) {
+    List<Character> characters = new ArrayList<Character>();
+    for (Character character : characterMap.values()) {
+      if (character.isPlayer() && character.getEvolution() == 0) {
+        characters.add(character);
+      }
+    }
+
+    int offset = 0;
+    Character prevCharacter = null;
+
+    characters.sort(new PowerStatComparator());
+    for (int i = 0; i < characters.size(); i++) {
+      Character character = characterMap.get(characters.get(i).getId());
+      if (prevCharacter != null && prevCharacter.getPower().get("max").equals(character.getPower().get("max"))) {
+        offset--;
+      }
+      character.getPower().put("ranking", i + 1 + offset);
+      prevCharacter = character;
+    }
+
+    characters.sort(new TechniqueStatComparator());
+    for (int i = 0; i < characters.size(); i++) {
+      characterMap.get(characters.get(i).getId()).getTechnique().put("ranking", i + 1);
+    }
+
+    characters.sort(new VitalityStatComparator());
+    for (int i = 0; i < characters.size(); i++) {
+      characterMap.get(characters.get(i).getId()).getVitality().put("ranking", i + 1);
+    }
+
+    characters.sort(new SpeedStatComparator());
+    for (int i = 0; i < characters.size(); i++) {
+      characterMap.get(characters.get(i).getId()).getSpeed().put("ranking", i + 1);
+    }
   }
 }
