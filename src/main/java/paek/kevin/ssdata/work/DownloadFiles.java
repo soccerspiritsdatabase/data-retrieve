@@ -1,5 +1,6 @@
 package paek.kevin.ssdata.work;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -27,15 +28,19 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.List;
 
 public class DownloadFiles {
 
   public static void getDbFiles() throws RuntimeException {
+    Map<String, PatchFile> dbFilesMap = new HashMap<String, PatchFile>();
     List<PatchFile> dbFiles = getPatchFiles("DB");
     for (Iterator<PatchFile> iterator = dbFiles.iterator(); iterator.hasNext();) {
       PatchFile dbFile = iterator.next();
@@ -53,13 +58,20 @@ public class DownloadFiles {
         byte[] data = download(dbFile.getDownloadUrl());
         System.out.println("\tDecrypting");
         byte[] decryptedData = RC4.decrypt(data);
-        Path destination = Config.RAW_DB_FILES_DIR.resolve(dbFile.getFileName());
-        System.out.println(String.format("\tWriting to disk (%s)", destination.normalize()));
-        Files.createDirectories(destination.getParent());
-        Files.write(destination, decryptedData);
-        System.out.println("\tDone");
+        String md5 = md5(decryptedData);
+        if (dbFile.getHashValue() != null && !md5.equals(dbFile.getHashValue())) {
+          System.out.println(String.format("\tHashValue did not match [%s] [%s]", dbFile.getHashValue(), md5));
+        } else {
+          Path destination = Config.RAW_DB_FILES_DIR.resolve(dbFile.getFileName());
+          System.out.println(String.format("\tWriting to disk (%s)", destination.normalize()));
+          Files.createDirectories(destination.getParent());
+          Files.write(destination, decryptedData);
+          System.out.println("\tDone");
+        }
       } catch (IOException e) {
         throw new RuntimeException(String.format("Failed to download DB File [%s]", dbFile.getFileName()), e);
+      } catch (NoSuchAlgorithmException e) {
+        throw new RuntimeException(String.format("Failed to calculate md5 [%s]", dbFile.getFileName()), e);
       }
     }
   }
@@ -158,29 +170,38 @@ public class DownloadFiles {
 
     List<PatchFile> patchFiles = new ArrayList<PatchFile>();
 
-    List<PatchFile> cardFiles = new ArrayList<PatchFile>();
-    List<PatchFile> dbFiles = new ArrayList<PatchFile>();
-
     xml.getDocumentElement().normalize();
     NodeList list = xml.getElementsByTagName("PatchFile");
     for (int i = 0; i < list.getLength(); i++) {
       Node node = list.item(i);
       if (node.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) node;
-        PatchFile patchFile = new PatchFile(element.getAttribute("Path"), element.getAttribute("FileName"), element.getAttribute("Version"));
+        PatchFile patchFile = new PatchFile(
+                element.getAttribute("Path"),
+                element.getAttribute("FileName"),
+                element.getAttribute("Version"),
+                element.getAttribute("HashValue")
+        );
         if (patchFile.getPath().equals(type)) {
           patchFiles.add(patchFile);
         }
+      }
+    }
 
-        if ("Cards".equals(patchFile.getPath()) && patchFile.getFileName().contains("_CS")) {
-          cardFiles.add(patchFile);
-        } else if ("DB".equals(patchFile.getPath())) {
-          if (Config.DB_FILES.contains(patchFile.getFileName())) {
-            dbFiles.add(patchFile);
-          }
+    /*
+    Map<String, PatchFile> patchFilesMap = new HashMap<String, PatchFile>();
+    for (PatchFile patchFile : patchFiles) {
+      if (patchFilesMap.get(patchFile.getFileName()) == null) {
+        patchFilesMap.put(patchFile.getFileName(), patchFile);
+      } else {
+        PatchFile patchFile2 = patchFilesMap.get(patchFile.getFileName());
+        if (patchFile.getVersionAsDouble() > patchFile2.getVersionAsDouble()) {
+          patchFilesMap.put(patchFile.getFileName(), patchFile);
         }
       }
     }
+    patchFiles = new ArrayList<PatchFile>(patchFilesMap.values());
+    */
 
     Collections.sort(patchFiles);
     return patchFiles;
@@ -195,6 +216,14 @@ public class DownloadFiles {
     httpResponse.close();
     httpClient.close();
     return data;
+  }
+
+  private static String md5(byte[] data) throws NoSuchAlgorithmException {
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    md.reset();
+    md.update(data);
+    final byte[] result = md.digest();
+    return new BigInteger(1, result).toString(16);
   }
 
   private static BufferedImage processImage(BufferedImage source, BufferedImage mask, Character character) throws IOException {

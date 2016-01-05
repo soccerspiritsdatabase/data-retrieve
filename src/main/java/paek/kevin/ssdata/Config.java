@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Config {
 
-  public static final String BASE_URL = "http://bereq-c2s.qpyou.cn/soccerspirits/Android/Live/";
+  public static final String BASE_URL = "http://image-glb.qpyou.cn/soccerspirits/Android/Live/";
   public static final String PATCH_XML_URL = BASE_URL.concat("PatchLive.xml");
   public static final List<String> DB_FILES = Arrays.asList(new String[]{
           "Texts",
