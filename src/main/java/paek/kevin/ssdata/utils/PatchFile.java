@@ -55,7 +55,7 @@ public class PatchFile implements Comparable<PatchFile> {
       if (this.getHashValue() == null || this.getHashValue().isEmpty()) {
         compare = -1;
       } else {
-        compare = -1 * Double.compare(this.getVersionAsDouble(), o.getVersionAsDouble());
+        compare = Double.compare(this.getVersionAsDouble(), o.getVersionAsDouble());
       }
     }
     return compare;
