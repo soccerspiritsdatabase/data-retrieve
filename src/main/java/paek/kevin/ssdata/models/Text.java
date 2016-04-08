@@ -24,6 +24,12 @@ public class Text extends Model {
     br.readString();
     // zhTW
     br.readString();
+    // es
+    br.readString();
+    // pt
+    br.readString();
+    // ru
+    br.readString();
 
     return true;
   }

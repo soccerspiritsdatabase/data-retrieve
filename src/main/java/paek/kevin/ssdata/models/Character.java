@@ -163,12 +163,15 @@ public class Character extends Model {
     season = br.readInt32();
 
     skins = new ArrayList<Integer>();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 7; i++) {
       int skin = br.readInt32();
       if (skin != 0) {
         skins.add(skin);
       }
     }
+
+    // who
+    br.readInt32();
 
     return true;
   }
