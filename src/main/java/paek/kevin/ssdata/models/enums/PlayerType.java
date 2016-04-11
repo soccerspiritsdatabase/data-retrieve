@@ -16,7 +16,10 @@ public enum PlayerType {
   STRIKER,
 
   @SerializedName("Assist")
-  ASSIST;
+  ASSIST,
+
+  @SerializedName("Goal Keeper")
+  GOAL_KEEPER;
 
   public static PlayerType valueOf(int value) {
     switch (value) {
@@ -30,6 +33,8 @@ public enum PlayerType {
         return PlayerType.STRIKER;
       case 5:
         return PlayerType.ASSIST;
+      case 8:
+        return PlayerType.GOAL_KEEPER;
       default:
         return null;
     }
