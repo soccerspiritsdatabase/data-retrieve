@@ -41,7 +41,7 @@ public class DownloadFiles {
 
   public static void getDbFiles() throws RuntimeException {
     Map<String, PatchFile> dbFilesMap = new HashMap<String, PatchFile>();
-    List<PatchFile> dbFiles = getPatchFiles("DB");
+    Collection<PatchFile> dbFiles = getPatchFiles("DB");
     for (Iterator<PatchFile> iterator = dbFiles.iterator(); iterator.hasNext();) {
       PatchFile dbFile = iterator.next();
       if (!Config.DB_FILES.contains(dbFile.getFileName())) {
@@ -85,7 +85,7 @@ public class DownloadFiles {
       }
     }
 
-    List<PatchFile> cardFiles = getPatchFiles("Cards");
+    Collection<PatchFile> cardFiles = getPatchFiles("Cards");
     for (Iterator<PatchFile> iterator = cardFiles.iterator(); iterator.hasNext();) {
       PatchFile cardFile = iterator.next();
       if (!cardFile.getFileName().endsWith("_CS")) {
@@ -107,7 +107,7 @@ public class DownloadFiles {
 
         if (!Files.exists(imageDestination)) {
           System.out.println(cardFile.getFileName());
-          if (!Files.exists(destination)) {
+          if (true || !Files.exists(destination)) {
             System.out.println(String.format("\tDownloading (%s)", cardFile.getDownloadUrl()));
             byte[] data = download(cardFile.getDownloadUrl());
             Files.createDirectories(destination.getParent());
@@ -149,7 +149,7 @@ public class DownloadFiles {
     }
   }
 
-  private static List<PatchFile> getPatchFiles(String type) {
+  private static Collection<PatchFile> getPatchFiles(String type) {
     Document xml = null;
     try {
       System.out.println("----------------------------------------");
@@ -168,7 +168,7 @@ public class DownloadFiles {
       throw new RuntimeException("Failed to get xml data.", e);
     }
 
-    List<PatchFile> patchFiles = new ArrayList<PatchFile>();
+    Map<String, PatchFile> map = new HashMap<String, PatchFile>();
 
     xml.getDocumentElement().normalize();
     NodeList list = xml.getElementsByTagName("PatchFile");
@@ -183,28 +183,14 @@ public class DownloadFiles {
                 element.getAttribute("HashValue")
         );
         if (patchFile.getPath().equals(type)) {
-          patchFiles.add(patchFile);
+          PatchFile prev = map.get(patchFile.getFileName());
+          if (prev == null || patchFile.compareTo(prev) > 0) {
+            map.put(patchFile.getFileName(), patchFile);
+          }
         }
       }
     }
-
-    /*
-    Map<String, PatchFile> patchFilesMap = new HashMap<String, PatchFile>();
-    for (PatchFile patchFile : patchFiles) {
-      if (patchFilesMap.get(patchFile.getFileName()) == null) {
-        patchFilesMap.put(patchFile.getFileName(), patchFile);
-      } else {
-        PatchFile patchFile2 = patchFilesMap.get(patchFile.getFileName());
-        if (patchFile.getVersionAsDouble() > patchFile2.getVersionAsDouble()) {
-          patchFilesMap.put(patchFile.getFileName(), patchFile);
-        }
-      }
-    }
-    patchFiles = new ArrayList<PatchFile>(patchFilesMap.values());
-    */
-
-    Collections.sort(patchFiles);
-    return patchFiles;
+    return map.values();
   }
 
   private static byte[] download(String url) throws IOException {
