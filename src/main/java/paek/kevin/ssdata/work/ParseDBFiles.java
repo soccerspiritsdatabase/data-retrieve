@@ -33,7 +33,10 @@ public class ParseDBFiles {
     Map<Object, Evolution> evolutions = parseModel("Evolutions", Evolution.class);
     Map<Object, CharacterCollection> characterCollections = parseModel("Collections", CharacterCollection.class);
     Map<Object, CharacterChain> characterChains = parseModel("CharacterChs", CharacterChain.class);
-    Map<Object, Character> characters = parseModel("Characters", Character.class);
+    Map<Object, Character> characters = Model.merge(
+            parseModel("Characters", Character.class),
+            parseModel("Character2s", Character.class)
+    ) ;
     Map<Object, SpiritStone> spiritStones = parseModel("Items", SpiritStone.class);
     Map<Object, SpiritStoneCollection> spiritStoneCollections = parseModel("ItemCollections", SpiritStoneCollection.class);
     Map<Object, Skill> skills = parseModel("Skills", Skill.class);
@@ -139,6 +142,7 @@ public class ParseDBFiles {
       Files.write(Config.JSON_FILES_DIR.resolve("spiritStones.json"), Arrays.asList(gson.toJson(spiritStones)), Charsets.ISO_8859_1);
       Files.write(Config.JSON_FILES_DIR.resolve("spiritStoneCollections.json"), Arrays.asList(gson.toJson(spiritStoneCollections)));
       Files.write(Config.JSON_FILES_DIR.resolve("skills.json"), Arrays.asList(gson.toJson(skills)), Charsets.ISO_8859_1);
+      //Files.write(Config.JSON_FILES_DIR.resolve("texts.json"), Arrays.asList(gson.toJson(texts)), Charsets.ISO_8859_1);
     } catch (IOException e) {
       throw new RuntimeException(String.format("Failed to save json files"), e);
     }

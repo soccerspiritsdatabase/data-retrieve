@@ -13,6 +13,7 @@ public class Config {
           "Texts",
           "TextCharacters",
           "Characters",
+          "Character2s",
           "Collections",
           "Skills",
           "CharacterChs",
