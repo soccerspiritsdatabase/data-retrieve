@@ -22,6 +22,7 @@ import java.util.*;
 public class ParseDBFiles {
 
   private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+  private static final Gson gsonPretty = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
   public static Map<Object, Character> process() {
     System.out.println("----------------------------------------");
@@ -40,6 +41,7 @@ public class ParseDBFiles {
     Map<Object, SpiritStone> spiritStones = parseModel("Items", SpiritStone.class);
     Map<Object, SpiritStoneCollection> spiritStoneCollections = parseModel("ItemCollections", SpiritStoneCollection.class);
     Map<Object, Skill> skills = parseModel("Skills", Skill.class);
+    Map<Object, Property> properties = parseModel("Propertys", Property.class);
 
     System.out.println("Combining references");
 
@@ -142,7 +144,8 @@ public class ParseDBFiles {
       Files.write(Config.JSON_FILES_DIR.resolve("spiritStones.json"), Arrays.asList(gson.toJson(spiritStones)), Charsets.ISO_8859_1);
       Files.write(Config.JSON_FILES_DIR.resolve("spiritStoneCollections.json"), Arrays.asList(gson.toJson(spiritStoneCollections)));
       Files.write(Config.JSON_FILES_DIR.resolve("skills.json"), Arrays.asList(gson.toJson(skills)), Charsets.ISO_8859_1);
-      //Files.write(Config.JSON_FILES_DIR.resolve("texts.json"), Arrays.asList(gson.toJson(texts)), Charsets.ISO_8859_1);
+      //Files.write(Config.JSON_FILES_DIR.resolve("_texts.json"), Arrays.asList(gsonPretty.toJson(texts)), Charsets.ISO_8859_1);
+      //Files.write(Config.JSON_FILES_DIR.resolve("_properties.json"), Arrays.asList(gsonPretty.toJson(properties)), Charsets.ISO_8859_1);
     } catch (IOException e) {
       throw new RuntimeException(String.format("Failed to save json files"), e);
     }

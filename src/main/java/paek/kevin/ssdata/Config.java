@@ -20,6 +20,7 @@ public class Config {
           "Items",
           "ItemCollections",
           "Evolutions",
+          "Propertys"
   });
 
   private static final Path BIN_DIR = Paths.get(".").resolve("bin").toAbsolutePath();
