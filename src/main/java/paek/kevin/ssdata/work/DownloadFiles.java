@@ -1,21 +1,15 @@
 package paek.kevin.ssdata.work;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import paek.kevin.ssdata.Config;
-import paek.kevin.ssdata.models.*;
 import paek.kevin.ssdata.models.Character;
 import paek.kevin.ssdata.utils.PatchFile;
 import paek.kevin.ssdata.utils.RC4;
@@ -28,14 +22,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DownloadFiles {
 
@@ -58,20 +50,13 @@ public class DownloadFiles {
         byte[] data = download(dbFile.getDownloadUrl());
         System.out.println("\tDecrypting");
         byte[] decryptedData = RC4.decrypt(data);
-        String md5 = md5(decryptedData);
-        if (dbFile.getHashValue() != null && !md5.equals(dbFile.getHashValue())) {
-          System.out.println(String.format("\tHashValue did not match [%s] [%s]", dbFile.getHashValue(), md5));
-        } else {
-          Path destination = Config.RAW_DB_FILES_DIR.resolve(dbFile.getFileName());
-          System.out.println(String.format("\tWriting to disk (%s)", destination.normalize()));
-          Files.createDirectories(destination.getParent());
-          Files.write(destination, decryptedData);
-          System.out.println("\tDone");
-        }
+        Path destination = Config.RAW_DB_FILES_DIR.resolve(dbFile.getFileName());
+        System.out.println(String.format("\tWriting to disk (%s)", destination.normalize()));
+        Files.createDirectories(destination.getParent());
+        Files.write(destination, decryptedData);
+        System.out.println("\tDone");
       } catch (IOException e) {
         throw new RuntimeException(String.format("Failed to download DB File [%s]", dbFile.getFileName()), e);
-      } catch (NoSuchAlgorithmException e) {
-        throw new RuntimeException(String.format("Failed to calculate md5 [%s]", dbFile.getFileName()), e);
       }
     }
   }
@@ -202,14 +187,6 @@ public class DownloadFiles {
     httpResponse.close();
     httpClient.close();
     return data;
-  }
-
-  private static String md5(byte[] data) throws NoSuchAlgorithmException {
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    md.reset();
-    md.update(data);
-    final byte[] result = md.digest();
-    return new BigInteger(1, result).toString(16);
   }
 
   private static BufferedImage processImage(BufferedImage source, BufferedImage mask, Character character) throws IOException {
